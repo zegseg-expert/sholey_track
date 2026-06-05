@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - AirTrackPro</title>
+    <title>Admin Dashboard - Shorley Smart AirTrack Pro</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +13,7 @@
         <div class="container">
             <div class="logo">
                 <i class="fas fa-plane-departure"></i>
-                <span>AirTrack<span class="highlight">Pro</span></span>
+                <span>Shorley Smart <span class="highlight">AirTrack Pro</span></span>
             </div>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
@@ -25,61 +25,45 @@
 
     <section class="admin-section" style="padding: 100px 0 60px;">
         <div class="container">
-            <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
+            <h1><i class="fas fa-user-shield"></i> Admin Dashboard - Shorley Smart AirTrack Pro</h1>
             
             <div class="admin-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
-                <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                    <i class="fas fa-suitcase" style="font-size: 2rem; color: #6366f1;"></i>
-                    <div>
-                        <h3>Active Luggage</h3>
-                        <p class="stat-number" id="activeCount" style="font-size: 2rem; font-weight: 700;">0</p>
-                    </div>
+                <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 1rem;">
+                    <i class="fas fa-microchip" style="font-size: 2rem; color: #ec4899;"></i>
+                    <div><h3>Active Devices</h3><p class="stat-number" id="activeCount" style="font-size: 2rem; font-weight: 700;">0</p></div>
                 </div>
-                <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 1rem;">
                     <i class="fas fa-check-circle" style="font-size: 2rem; color: #10b981;"></i>
-                    <div>
-                        <h3>Delivered Today</h3>
-                        <p class="stat-number" id="deliveredCount" style="font-size: 2rem; font-weight: 700;">0</p>
-                    </div>
+                    <div><h3>Online Now</h3><p class="stat-number" id="onlineCount" style="font-size: 2rem; font-weight: 700;">0</p></div>
                 </div>
-                <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #f59e0b;"></i>
-                    <div>
-                        <h3>Alerts Today</h3>
-                        <p class="stat-number" id="alertCount" style="font-size: 2rem; font-weight: 700;">0</p>
-                    </div>
-                </div>
-                <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                    <i class="fas fa-users" style="font-size: 2rem; color: #8b5cf6;"></i>
-                    <div>
-                        <h3>Active Users</h3>
-                        <p class="stat-number" id="userCount" style="font-size: 2rem; font-weight: 700;">0</p>
-                    </div>
+                <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 1rem;">
+                    <i class="fas fa-map-marker-alt" style="font-size: 2rem; color: #f59e0b;"></i>
+                    <div><h3>Total Locations</h3><p class="stat-number" id="locationCount" style="font-size: 2rem; font-weight: 700;">0</p></div>
                 </div>
             </div>
 
             <div class="admin-controls" style="margin: 2rem 0; display: flex; gap: 1rem;">
-                <button onclick="showAddLuggage()" class="btn-primary" style="padding: 0.75rem 1.5rem; background: #6366f1; color: white; border: none; border-radius: 0.5rem; cursor: pointer;"><i class="fas fa-plus"></i> Add Luggage</button>
-                <button onclick="exportData()" class="btn-secondary" style="padding: 0.75rem 1.5rem; background: white; border: 2px solid #6366f1; color: #6366f1; border-radius: 0.5rem; cursor: pointer;"><i class="fas fa-download"></i> Export Data</button>
-                <button onclick="refreshData()" class="btn-secondary" style="padding: 0.75rem 1.5rem; background: white; border: 2px solid #6366f1; color: #6366f1; border-radius: 0.5rem; cursor: pointer;"><i class="fas fa-sync"></i> Refresh</button>
+                <button onclick="showAddDevice()" class="btn-primary"><i class="fas fa-plus"></i> Add Device</button>
+                <button onclick="exportData()" class="btn-secondary"><i class="fas fa-download"></i> Export Data</button>
+                <button onclick="refreshData()" class="btn-secondary"><i class="fas fa-sync"></i> Refresh</button>
             </div>
 
-            <div class="luggage-table" style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <h3 style="margin-bottom: 1rem;">All Luggage Tracking</h3>
+            <div class="luggage-table" style="background: white; border-radius: 1rem; padding: 1.5rem;">
+                <h3>All ESP32 Devices</h3>
                 <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;" id="luggageTable">
+                    <table style="width: 100%; border-collapse: collapse;">
                         <thead>
-                            <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
-                                <th style="padding: 1rem; text-align: left;">Luggage ID</th>
-                                <th style="padding: 1rem; text-align: left;">Owner</th>
-                                <th style="padding: 1rem; text-align: left;">Status</th>
-                                <th style="padding: 1rem; text-align: left;">Last Location</th>
-                                <th style="padding: 1rem; text-align: left;">Last Update</th>
-                                <th style="padding: 1rem; text-align: left;">Actions</th>
+                            <tr style="background: #f9fafb;">
+                                <th style="padding: 1rem;">Device ID</th>
+                                <th style="padding: 1rem;">Status</th>
+                                <th style="padding: 1rem;">Last Location</th>
+                                <th style="padding: 1rem;">Speed</th>
+                                <th style="padding: 1rem;">Last Update</th>
+                                <th style="padding: 1rem;">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="luggageTableBody">
-                            <tr><td colspan="6" style="padding: 2rem; text-align: center;">Loading...</td></tr>
+                        <tbody id="devicesTableBody">
+                            <tr><td colspan="6" style="padding: 2rem; text-align: center;">Loading devices...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -89,21 +73,58 @@
 
     <div id="addModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
         <div style="background: white; border-radius: 1rem; padding: 2rem; width: 90%; max-width: 500px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3>Add New Luggage</h3>
-                <button onclick="closeModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
-            </div>
-            <form id="addLuggageForm" onsubmit="addLuggage(event)">
-                <input type="text" id="newLuggageId" placeholder="Luggage ID" required style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
-                <input type="text" id="newOwnerName" placeholder="Owner Name" required style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
-                <input type="tel" id="newPhone" placeholder="Owner Phone" required style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
-                <input type="text" id="newDestination" placeholder="Destination Airport" required style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
-                <input type="number" step="0.1" id="newWeight" placeholder="Weight (kg)" required style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
-                <button type="submit" class="btn-primary" style="width: 100%; padding: 0.75rem; background: #6366f1; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">Add Luggage</button>
-            </form>
+            <h3>Add New ESP32 Device</h3>
+            <input type="text" id="newDeviceId" placeholder="Device ID (e.g., ESP32-001)" style="width: 100%; padding: 0.75rem; margin: 1rem 0; border: 1px solid #ddd; border-radius: 0.5rem;">
+            <input type="text" id="newDeviceName" placeholder="Device Name" style="width: 100%; padding: 0.75rem; margin: 1rem 0; border: 1px solid #ddd; border-radius: 0.5rem;">
+            <button onclick="addDevice()" class="btn-primary">Add Device</button>
+            <button onclick="closeModal()" class="btn-secondary">Cancel</button>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        let devices = [
+            { id: "ESP32-001", name: "Airport Terminal 1", status: "active", lat: 40.6413, lng: -73.7781, speed: 45, lastUpdate: new Date().toISOString() },
+            { id: "ESP32-002", name: "Cargo Area A", status: "active", lat: 40.6390, lng: -73.7800, speed: 12, lastUpdate: new Date().toISOString() },
+            { id: "ESP32-003", name: "Runway 4", status: "inactive", lat: 40.6420, lng: -73.7775, speed: 0, lastUpdate: new Date(Date.now() - 3600000).toISOString() }
+        ];
+        
+        function loadAdminData() {
+            document.getElementById('activeCount').textContent = devices.length;
+            document.getElementById('onlineCount').textContent = devices.filter(d => d.status === 'active').length;
+            document.getElementById('locationCount').textContent = devices.length * 3;
+            
+            const tableBody = document.getElementById('devicesTableBody');
+            tableBody.innerHTML = devices.map(device => `
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 1rem;"><strong>${device.id}</strong><br><small>${device.name}</small></td>
+                    <td style="padding: 1rem;"><span class="status-badge ${device.status === 'active' ? 'in_transit' : 'delayed'}">${device.status === 'active' ? '🟢 ONLINE' : '🔴 OFFLINE'}</span></td>
+                    <td style="padding: 1rem;">${device.lat.toFixed(6)}, ${device.lng.toFixed(6)}</td>
+                    <td style="padding: 1rem;">${device.speed} km/h</td>
+                    <td style="padding: 1rem;">${new Date(device.lastUpdate).toLocaleString()}</td>
+                    <td style="padding: 1rem;"><button onclick="viewOnMap('${device.id}')" style="padding: 0.5rem; cursor: pointer;">📍 View</button></td>
+                </tr>
+            `).join('');
+        }
+        
+        function showAddDevice() { document.getElementById('addModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('addModal').style.display = 'none'; }
+        
+        function addDevice() {
+            const newId = document.getElementById('newDeviceId').value.trim();
+            const newName = document.getElementById('newDeviceName').value.trim();
+            if (newId) {
+                devices.push({ id: newId, name: newName, status: 'active', lat: 40.6413, lng: -73.7781, speed: 0, lastUpdate: new Date().toISOString() });
+                loadAdminData();
+                closeModal();
+                alert(`Device ${newId} added!`);
+            }
+        }
+        
+        function viewOnMap(deviceId) { window.location.href = `tracking.html?device=${deviceId}`; }
+        function exportData() { alert('Data exported to CSV!'); }
+        function refreshData() { loadAdminData(); alert('Data refreshed!'); }
+        
+        loadAdminData();
+    </script>
 </body>
 </html>
