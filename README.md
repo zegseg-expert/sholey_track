@@ -1,28 +1,50 @@
-# ✈️ Airport Freight Luggage Tracking System
+# ✈️ Shorley Smart AirTrack Pro
 
-A complete real-time luggage tracking system with ESP32, GPS, and web dashboard.
+A professional airport freight luggage tracking system with real-time GPS tracking.
 
 ## 🚀 Live Demo
 
-After deploying to GitHub Pages, your site will be live at:
-`https://YOUR-USERNAME.github.io/luggage-tracker-website/`
+Visit: `https://YOUR-USERNAME.github.io/shorley-tracker/`
 
-## 📋 Demo Credentials
+## 📋 Test Device IDs
 
-Try these test luggage IDs on the tracking page:
-- **LUG-001** - In transit (JFK Airport)
-- **LUG-002** - Arrived (LAX Airport)  
-- **LUG-003** - Delayed (ORD Airport)
+- **ESP32-001** - Airport Terminal 1 (Moving)
+- **ESP32-002** - Cargo Area A (Moving)
+- **ESP32-003** - Runway 4 (Offline)
 
 ## 🎯 Features
 
-- ✅ Real-time GPS tracking on interactive map
-- ✅ Live location updates with route history
-- ✅ Speed gauge and movement statistics
-- ✅ SMS notification subscription (demo)
-- ✅ Admin dashboard with all luggage management
-- ✅ Add/export luggage data
-- ✅ Responsive design for mobile/tablet/desktop
-- ✅ Mock data included - works immediately
+- Real-time GPS tracking on interactive map
+- Live location updates every 3 seconds
+- Speed gauge and movement statistics
+- Route history tracking
+- Admin dashboard for device management
+- Responsive design
 
-## 📁 File Structure
+## 📁 Files
+
+- `index.html` - Landing page
+- `tracking.html` - Live tracking dashboard
+- `admin.html` - Admin panel
+- `styles.css` - Styling (Pink theme)
+- `script.js` - JavaScript functions
+- `README.md` - Documentation
+
+## 🛠️ Deployment to GitHub Pages
+
+1. Create a GitHub repository
+2. Upload all 6 files
+3. Go to Settings → Pages
+4. Select "main" branch
+5. Save - site live in 2 minutes
+
+## 📱 Usage
+
+1. Open the website
+2. Click "Live Tracking"
+3. Enter a Device ID (ESP32-001)
+4. Watch the real-time location on map
+
+---
+
+**Built for Shorley Smart AirTrack Pro** © 2024
