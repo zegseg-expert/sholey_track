@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -24,11 +23,6 @@
                 <li><a href="tracking.html" class="active">Live Tracking</a></li>
                 <li><a href="admin.html">Admin</a></li>
             </ul>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
         </div>
     </nav>
 
@@ -37,32 +31,29 @@
             <div class="tracking-header">
                 <h1><i class="fas fa-map-marked-alt"></i> Live Luggage Tracking</h1>
                 <p>Enter your luggage ID to start tracking in real-time</p>
+                <p style="color: #666; font-size: 14px; margin-top: 10px;">Demo IDs: LUG-001, LUG-002, LUG-003</p>
             </div>
 
-            <!-- Search Box -->
             <div class="search-container">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="luggageId" placeholder="Enter Luggage ID (e.g., LUG-001, LUG-002)" autocomplete="off">
+                    <input type="text" id="luggageId" placeholder="Enter Luggage ID (e.g., LUG-001, LUG-002, LUG-003)" autocomplete="off">
                     <button onclick="trackLuggage()" class="btn-primary">Track Now</button>
                 </div>
                 <div class="recent-tracking">
-                    <span>Recent IDs:</span>
+                    <span>Demo IDs:</span>
                     <button onclick="quickTrack('LUG-001')">LUG-001</button>
                     <button onclick="quickTrack('LUG-002')">LUG-002</button>
                     <button onclick="quickTrack('LUG-003')">LUG-003</button>
                 </div>
             </div>
 
-            <!-- Loading Indicator -->
             <div id="loading" class="loading" style="display: none;">
                 <div class="spinner"></div>
                 <p>Fetching real-time location...</p>
             </div>
 
-            <!-- Dashboard Grid -->
             <div id="dashboard" class="dashboard-grid" style="display: none;">
-                <!-- Luggage Info Card -->
                 <div class="dashboard-card info-card">
                     <div class="card-header">
                         <i class="fas fa-suitcase"></i>
@@ -92,7 +83,6 @@
                     </div>
                 </div>
 
-                <!-- Location Card -->
                 <div class="dashboard-card location-card">
                     <div class="card-header">
                         <i class="fas fa-map-marker-alt"></i>
@@ -120,7 +110,6 @@
                     </div>
                 </div>
 
-                <!-- Speed & Movement Card -->
                 <div class="dashboard-card stats-card">
                     <div class="card-header">
                         <i class="fas fa-tachometer-alt"></i>
@@ -149,33 +138,27 @@
                     </div>
                 </div>
 
-                <!-- Map Card -->
                 <div class="dashboard-card map-card">
                     <div class="card-header">
                         <i class="fas fa-map"></i>
                         <h3>Live Map View</h3>
                         <div class="map-controls">
                             <button onclick="centerMap()"><i class="fas fa-crosshairs"></i></button>
-                            <button onclick="toggleTraffic()"><i class="fas fa-car"></i></button>
-                            <button onclick="toggleSatellite()"><i class="fas fa-globe"></i></button>
                         </div>
                     </div>
                     <div id="map"></div>
                 </div>
 
-                <!-- Route History Card -->
                 <div class="dashboard-card history-card">
                     <div class="card-header">
                         <i class="fas fa-history"></i>
                         <h3>Route History</h3>
-                        <button onclick="toggleHistory()" class="btn-small">View All</button>
                     </div>
                     <div class="history-timeline" id="historyTimeline">
                         <div class="timeline-empty">No history data available</div>
                     </div>
                 </div>
 
-                <!-- Alerts Card -->
                 <div class="dashboard-card alerts-card">
                     <div class="card-header">
                         <i class="fas fa-bell"></i>
@@ -188,12 +171,11 @@
                 </div>
             </div>
 
-            <!-- SMS Notification Panel -->
             <div class="sms-panel" id="smsPanel" style="display: none;">
                 <div class="sms-header">
                     <i class="fas fa-sms"></i>
                     <h3>SMS Notifications</h3>
-                    <button onclick="closeSMSPanel()" class="close-btn">&times;</button>
+                    <button onclick="closeSMSPanel()" class="close-btn" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
                 </div>
                 <div class="sms-content">
                     <p>Get real-time SMS alerts for this luggage</p>
