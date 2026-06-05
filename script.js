@@ -11,8 +11,8 @@ let speedGaugeChart;
 const mockDatabase = {
     "LUG-001": {
         luggage_id: "LUG-001",
-        owner_name: "John Smith",
-        owner_phone: "+1234567890",
+        owner_name: "shorley",
+        owner_phone: "+2349070895682",
         destination: "JFK Airport, New York",
         weight: "23.5 kg",
         status: "in_transit",
