@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Tracking - AirTrackPro</title>
+    <title>Live Tracking - Shorley Smart AirTrack Pro</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,7 +16,7 @@
         <div class="container">
             <div class="logo">
                 <i class="fas fa-plane-departure"></i>
-                <span>AirTrack<span class="highlight">Pro</span></span>
+                <span>Shorley Smart <span class="highlight">AirTrack Pro</span></span>
             </div>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
@@ -29,64 +29,60 @@
     <section class="tracking-section">
         <div class="container">
             <div class="tracking-header">
-                <h1><i class="fas fa-map-marked-alt"></i> Live Luggage Tracking</h1>
-                <p>Enter your luggage ID to start tracking in real-time</p>
-                <p style="color: #666; font-size: 14px; margin-top: 10px;">Demo IDs: LUG-001, LUG-002, LUG-003</p>
+                <h1><i class="fas fa-map-marked-alt"></i> Live ESP32 Device Tracking</h1>
+                <p>Track your ESP32 device with GPS in real-time</p>
+                <p style="color: #ec4899; margin-top: 10px;">⚡ Shorley Smart AirTrack Pro - Real-Time GPS Tracking</p>
             </div>
 
             <div class="search-container">
                 <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="luggageId" placeholder="Enter Luggage ID (e.g., LUG-001, LUG-002, LUG-003)" autocomplete="off">
-                    <button onclick="trackLuggage()" class="btn-primary">Track Now</button>
+                    <i class="fas fa-microchip"></i>
+                    <input type="text" id="deviceId" placeholder="Enter Device ID (e.g., ESP32-001)" autocomplete="off">
+                    <button onclick="trackDevice()" class="btn-primary">Track Live</button>
                 </div>
                 <div class="recent-tracking">
-                    <span>Demo IDs:</span>
-                    <button onclick="quickTrack('LUG-001')">LUG-001</button>
-                    <button onclick="quickTrack('LUG-002')">LUG-002</button>
-                    <button onclick="quickTrack('LUG-003')">LUG-003</button>
+                    <span>Demo Devices:</span>
+                    <button onclick="quickTrack('ESP32-001')">ESP32-001</button>
+                    <button onclick="quickTrack('ESP32-002')">ESP32-002</button>
+                    <button onclick="quickTrack('ESP32-003')">ESP32-003</button>
                 </div>
             </div>
 
             <div id="loading" class="loading" style="display: none;">
                 <div class="spinner"></div>
-                <p>Fetching real-time location...</p>
+                <p>Connecting to ESP32 device...</p>
             </div>
 
             <div id="dashboard" class="dashboard-grid" style="display: none;">
                 <div class="dashboard-card info-card">
                     <div class="card-header">
-                        <i class="fas fa-suitcase"></i>
-                        <h3>Luggage Information</h3>
+                        <i class="fas fa-microchip"></i>
+                        <h3>ESP32 Device Information</h3>
                     </div>
                     <div class="info-content">
                         <div class="info-row">
-                            <span class="info-label">Luggage ID:</span>
-                            <span class="info-value" id="displayId">-</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Owner:</span>
-                            <span class="info-value" id="ownerName">-</span>
+                            <span class="info-label">Device ID:</span>
+                            <span class="info-value" id="deviceIdDisplay">-</span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">Status:</span>
-                            <span class="status-badge" id="status">-</span>
+                            <span class="status-badge" id="deviceStatus">-</span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label">Destination:</span>
-                            <span class="info-value" id="destination">-</span>
+                            <span class="info-label">Battery:</span>
+                            <span class="info-value" id="battery">-</span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label">Weight:</span>
-                            <span class="info-value" id="weight">-</span>
+                            <span class="info-label">Last Seen:</span>
+                            <span class="info-value" id="lastSeen">-</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="dashboard-card location-card">
                     <div class="card-header">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <h3>Current Location</h3>
+                        <i class="fas fa-satellite-dish"></i>
+                        <h3>GPS Location</h3>
                     </div>
                     <div class="location-content">
                         <div class="coordinates">
@@ -99,20 +95,30 @@
                                 <strong id="longitude">-</strong>
                             </div>
                         </div>
-                        <div class="address" id="address">
-                            <i class="fas fa-location-dot"></i>
-                            <span>Fetching address...</span>
+                        <div class="gps-details">
+                            <div class="detail-row">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Speed: <strong id="speed">0</strong> km/h</span>
+                            </div>
+                            <div class="detail-row">
+                                <i class="fas fa-mountain"></i>
+                                <span>Altitude: <strong id="altitude">0</strong> m</span>
+                            </div>
+                            <div class="detail-row">
+                                <i class="fas fa-satellite"></i>
+                                <span>Satellites: <strong id="satellites">0</strong></span>
+                            </div>
                         </div>
                         <div class="last-update">
                             <i class="fas fa-clock"></i>
-                            <span>Last update: <span id="lastUpdate">-</span></span>
+                            <span>Last GPS update: <span id="lastGpsUpdate">-</span></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="dashboard-card stats-card">
                     <div class="card-header">
-                        <i class="fas fa-tachometer-alt"></i>
+                        <i class="fas fa-chart-line"></i>
                         <h3>Movement Statistics</h3>
                     </div>
                     <div class="stats-content">
@@ -123,16 +129,12 @@
                         </div>
                         <div class="stat-details">
                             <div class="detail-item">
-                                <i class="fas fa-satellite"></i>
-                                <span>Satellites: <strong id="satellites">-</strong></span>
+                                <i class="fas fa-road"></i>
+                                <span>Distance: <strong id="distance">0</strong> km</span>
                             </div>
                             <div class="detail-item">
-                                <i class="fas fa-signal"></i>
-                                <span>Signal: <strong id="signal">-</strong></span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-battery-full"></i>
-                                <span>Battery: <strong id="battery">-</strong></span>
+                                <i class="fas fa-clock"></i>
+                                <span>Moving time: <strong id="movingTime">0</strong> min</span>
                             </div>
                         </div>
                     </div>
@@ -141,9 +143,10 @@
                 <div class="dashboard-card map-card">
                     <div class="card-header">
                         <i class="fas fa-map"></i>
-                        <h3>Live Map View</h3>
+                        <h3>Live Location Map</h3>
                         <div class="map-controls">
                             <button onclick="centerMap()"><i class="fas fa-crosshairs"></i></button>
+                            <button onclick="clearPath()"><i class="fas fa-eraser"></i></button>
                         </div>
                     </div>
                     <div id="map"></div>
@@ -152,41 +155,186 @@
                 <div class="dashboard-card history-card">
                     <div class="card-header">
                         <i class="fas fa-history"></i>
-                        <h3>Route History</h3>
+                        <h3>Live Route History</h3>
+                        <span id="pointCount" class="alert-count">0 points</span>
                     </div>
                     <div class="history-timeline" id="historyTimeline">
-                        <div class="timeline-empty">No history data available</div>
+                        <div class="timeline-empty">Waiting for GPS data...</div>
                     </div>
-                </div>
-
-                <div class="dashboard-card alerts-card">
-                    <div class="card-header">
-                        <i class="fas fa-bell"></i>
-                        <h3>Recent Alerts</h3>
-                        <span class="alert-count" id="alertCount">0</span>
-                    </div>
-                    <div class="alerts-list" id="alertsList">
-                        <div class="alert-empty">No new alerts</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sms-panel" id="smsPanel" style="display: none;">
-                <div class="sms-header">
-                    <i class="fas fa-sms"></i>
-                    <h3>SMS Notifications</h3>
-                    <button onclick="closeSMSPanel()" class="close-btn" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
-                </div>
-                <div class="sms-content">
-                    <p>Get real-time SMS alerts for this luggage</p>
-                    <input type="tel" id="phoneNumber" placeholder="Enter phone number (e.g., +1234567890)">
-                    <button onclick="subscribeSMS()" class="btn-primary">Subscribe to Alerts</button>
-                    <small>You'll receive alerts for zone entries, delays, and arrivals</small>
                 </div>
             </div>
         </div>
     </section>
 
-    <script src="script.js"></script>
+    <script>
+        let map;
+        let marker;
+        let pathLayer;
+        let pathPoints = [];
+        let currentDeviceId = null;
+        let liveInterval = null;
+        let speedGaugeChart;
+        let totalDistance = 0;
+        let lastPosition = null;
+        let startTime = null;
+        
+        // Mock moving location (simulates ESP32 moving)
+        let mockLat = 40.6413;
+        let mockLng = -73.7781;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+            const urlParams = new URLSearchParams(window.location.search);
+            const deviceId = urlParams.get('device');
+            if (deviceId) {
+                document.getElementById('deviceId').value = deviceId;
+                trackDevice();
+            }
+        });
+        
+        function initMap() {
+            map = L.map('map').setView([40.6413, -73.7781], 15);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+            }).addTo(map);
+        }
+        
+        function trackDevice() {
+            const deviceId = document.getElementById('deviceId').value.trim();
+            if (!deviceId) {
+                alert('Please enter a Device ID');
+                return;
+            }
+            
+            currentDeviceId = deviceId;
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
+            
+            pathPoints = [];
+            totalDistance = 0;
+            lastPosition = null;
+            startTime = Date.now();
+            if (pathLayer) map.removeLayer(pathLayer);
+            if (marker) map.removeLayer(marker);
+            
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'grid';
+                if (liveInterval) clearInterval(liveInterval);
+                liveInterval = setInterval(fetchDeviceLocation, 3000);
+                fetchDeviceLocation();
+            }, 1000);
+        }
+        
+        function fetchDeviceLocation() {
+            // Simulate ESP32 moving in real-time
+            mockLat += (Math.random() - 0.5) * 0.0005;
+            mockLng += (Math.random() - 0.5) * 0.0005;
+            
+            const mockData = {
+                device_id: currentDeviceId,
+                latitude: mockLat,
+                longitude: mockLng,
+                speed: Math.floor(Math.random() * 80) + 10,
+                altitude: Math.floor(Math.random() * 100) + 10,
+                satellites: Math.floor(Math.random() * 8) + 4,
+                last_update: new Date().toISOString(),
+                battery: Math.floor(Math.random() * 40) + 60
+            };
+            
+            updateDashboard(mockData);
+            updateMapWithLocation(mockData);
+            updateHistory(mockData);
+            updateDistance(mockData);
+        }
+        
+        function updateDashboard(data) {
+            document.getElementById('deviceIdDisplay').textContent = data.device_id;
+            document.getElementById('latitude').textContent = data.latitude.toFixed(6);
+            document.getElementById('longitude').textContent = data.longitude.toFixed(6);
+            document.getElementById('speed').textContent = data.speed;
+            document.getElementById('speedValue').textContent = data.speed;
+            document.getElementById('altitude').textContent = data.altitude;
+            document.getElementById('satellites').textContent = data.satellites;
+            document.getElementById('battery').textContent = `${data.battery}%`;
+            document.getElementById('lastSeen').textContent = new Date(data.last_update).toLocaleTimeString();
+            document.getElementById('lastGpsUpdate').textContent = new Date(data.last_update).toLocaleTimeString();
+            
+            const deviceStatus = document.getElementById('deviceStatus');
+            deviceStatus.textContent = 'LIVE';
+            deviceStatus.className = 'status-badge in_transit';
+            
+            updateSpeedGauge(data.speed);
+        }
+        
+        function updateMapWithLocation(data) {
+            const lat = data.latitude;
+            const lng = data.longitude;
+            
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng]).addTo(map);
+                marker.bindPopup(`<b>${data.device_id}</b><br>Speed: ${data.speed} km/h`);
+            }
+            
+            pathPoints.push([lat, lng]);
+            if (pathLayer) map.removeLayer(pathLayer);
+            pathLayer = L.polyline(pathPoints, { color: '#ec4899', weight: 3 }).addTo(map);
+            document.getElementById('pointCount').textContent = `${pathPoints.length} points`;
+            map.setView([lat, lng], 15);
+        }
+        
+        function updateDistance(data) {
+            const currentPos = { lat: data.latitude, lng: data.longitude };
+            if (lastPosition) {
+                const R = 6371;
+                const dLat = (currentPos.lat - lastPosition.lat) * Math.PI / 180;
+                const dLon = (currentPos.lng - lastPosition.lng) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                          Math.cos(lastPosition.lat * Math.PI/180) * Math.cos(currentPos.lat * Math.PI/180) *
+                          Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                const distance = R * c;
+                totalDistance += distance;
+                document.getElementById('distance').textContent = totalDistance.toFixed(2);
+            }
+            lastPosition = currentPos;
+            const movingMinutes = Math.floor((Date.now() - startTime) / 60000);
+            document.getElementById('movingTime').textContent = movingMinutes;
+        }
+        
+        function updateHistory(data) {
+            const timeline = document.getElementById('historyTimeline');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'timeline-item';
+            newEntry.innerHTML = `
+                <div class="timeline-time">${new Date(data.last_update).toLocaleTimeString()}</div>
+                <div class="timeline-location">📍 ${data.latitude.toFixed(6)}, ${data.longitude.toFixed(6)}</div>
+                <div class="timeline-status">⚡ Speed: ${data.speed} km/h</div>
+            `;
+            if (timeline.firstChild && timeline.firstChild.className === 'timeline-empty') {
+                timeline.innerHTML = '';
+            }
+            timeline.insertBefore(newEntry, timeline.firstChild);
+            while (timeline.children.length > 20) {
+                timeline.removeChild(timeline.lastChild);
+            }
+        }
+        
+        function updateSpeedGauge(speed) {
+            const ctx = document.getElementById('speedGauge').getContext('2d');
+            if (speedGaugeChart) speedGaugeChart.destroy();
+            speedGaugeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: { datasets: [{ data: [speed, Math.max(0, 120 - speed)], backgroundColor: ['#ec4899', '#e5e7eb'], borderWidth: 0 }] },
+                options: { cutout: '70%', responsive: true, plugins: { legend: { display: false } } }
+            });
+        }
+        
+        function centerMap() { if (marker) map.setView(marker.getLatLng(), 15); }
+        function clearPath() { pathPoints = []; if (pathLayer) map.removeLayer(pathLayer); document.getElementById('pointCount').textContent = '0 points'; }
+        function quickTrack(deviceId) { document.getElementById('deviceId').value = deviceId; trackDevice(); }
+    </script>
 </body>
 </html>
