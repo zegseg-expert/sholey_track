@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shorley Smart AirTrack Pro - Live Map</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #map { height: 100vh; width: 100%; }
+        .info-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-size: 14px;
+            min-width: 260px;
+            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.95);
+        }
+        .title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #ec4899;
+            margin-bottom: 8px;
+        }
+        .live-badge {
+            background: #ec4899;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: normal;
+            margin-left: 8px;
+        }
+        .data-row {
+            margin: 5px 0;
+            font-size: 13px;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .online { color: #10b981; }
+        .offline { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="info-panel">
+        <div class="title">
+            📍 Shorley Smart AirTrack Pro
+            <span class="live-badge">LIVE</span>
+        </div>
+        <div class="data-row" id="status">🟡 Connecting...</div>
+        <div class="data-row" id="coords">📍 Waiting for data</div>
+        <div class="data-row" id="speed">⚡ -- km/h</div>
+        <div class="data-row" id="time">🕐 --</div>
+    </div>
+
+    <script>
+        // Your Firebase configuration (from above)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDGa_gw80c9x0fhgjakh3Zom289dNP_qKI",
+            authDomain: "shorley-airtrack.firebaseapp.com",
+            databaseURL: "https://shorley-airtrack-default-rtdb.firebaseio.com",
+            projectId: "shorley-airtrack",
+            storageBucket: "shorley-airtrack.firebasestorage.app",
+            messagingSenderId: "310823970995",
+            appId: "1:310823970995:web:ce77612a425ef290ae28c6",
+            measurementId: "G-G5X41T59LS"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Initialize map (center will update when data arrives)
+        let map = L.map('map').setView([0, 0], 15);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+        }).addTo(map);
+
+        let marker = null;
+        let pathPoints = [];
+        let pathLayer = null;
+
+        // Listen for real-time GPS data from Firebase
+        const gpsRef = database.ref('/gps');
+        gpsRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.latitude && data.longitude) {
+                const lat = data.latitude;
+                const lng = data.longitude;
+                const speed = data.speed || 0;
+                
+                // Update UI
+                document.getElementById('status').innerHTML = '🟢 Device Online';
+                document.getElementById('coords').innerHTML = `📍 ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                document.getElementById('speed').innerHTML = `⚡ ${speed.toFixed(1)} km/h`;
+                document.getElementById('time').innerHTML = `🕐 Updated: ${new Date().toLocaleTimeString()}`;
+                
+                // Update or create marker
+                if (marker) {
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    marker = L.marker([lat, lng]).addTo(map);
+                    marker.bindPopup('<b>Shorley AirTrack Pro</b><br>Live GPS Tracker');
+                }
+                marker.openPopup();
+                
+                // Draw path (history)
+                pathPoints.push([lat, lng]);
+                // Keep last 100 points to avoid clutter
+                if (pathPoints.length > 100) pathPoints.shift();
+                if (pathLayer) map.removeLayer(pathLayer);
+                pathLayer = L.polyline(pathPoints, { color: '#ec4899', weight: 3, opacity: 0.7 }).addTo(map);
+                
+                // Center map on device
+                map.setView([lat, lng], 15);
+            } else {
+                document.getElementById('status').innerHTML = '🟡 Waiting for ESP32 data...';
+                document.getElementById('coords').innerHTML = '📍 No location yet';
+            }
+        }, (error) => {
+            console.error("Firebase read error:", error);
+            document.getElementById('status').innerHTML = '🔴 Connection error';
+        });
+    </script>
+</body>
+</html>
