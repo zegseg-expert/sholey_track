@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shorley Smart AirTrack Pro - Airport Luggage Tracking</title>
+    <title>Shorley Smart AirTrack Pro - Live GPS Tracker</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet for map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -21,12 +27,13 @@
                 <li><a href="admin.html">Admin</a></li>
             </ul>
             <div class="nav-buttons">
-                <a href="tracking.html" class="btn-primary">Track Luggage</a>
+                <a href="#live-map" class="btn-primary">Live Map</a>
                 <a href="admin.html" class="btn-secondary">Admin Login</a>
             </div>
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
@@ -43,8 +50,8 @@
                     Monitor your freight from check-in to arrival with GPS precision.
                 </p>
                 <div class="hero-buttons">
-                    <a href="tracking.html" class="btn-large btn-primary">
-                        <i class="fas fa-search"></i> Track Now
+                    <a href="#live-map" class="btn-large btn-primary">
+                        <i class="fas fa-search"></i> View Live Map
                     </a>
                 </div>
                 <div class="hero-stats">
@@ -79,7 +86,40 @@
         </div>
     </section>
 
-    <section id="features" class="features">
+    <!-- LIVE MAP SECTION (New) -->
+    <section id="live-map" class="live-map-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Live Tracking</span>
+                <h2 class="section-title">Real‑Time GPS Location</h2>
+                <p class="section-description">
+                    Your ESP32 device location updates every 10 seconds. See it move on the map.
+                </p>
+            </div>
+            <div class="map-container">
+                <div id="map"></div>
+                <div class="map-data-panel">
+                    <div class="data-row">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Latitude: <strong id="lat">--</strong></span>
+                        <span>Longitude: <strong id="lng">--</strong></span>
+                    </div>
+                    <div class="data-row">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Speed: <strong id="speed">--</strong> km/h</span>
+                    </div>
+                    <div class="data-row">
+                        <i class="fas fa-clock"></i>
+                        <span>Last update: <span id="timestamp">--</span></span>
+                    </div>
+                    <div class="status-badge online" id="onlineStatus">● LIVE</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section (unchanged) -->
+    <section class="features">
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">Features</span>
@@ -90,46 +130,19 @@
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-satellite-dish"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-satellite-dish"></i></div>
                     <h3>GPS Real-Time Tracking</h3>
                     <p>NEO-6M GPS module provides accurate location updates every 5 seconds</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-cloud-upload-alt"></i></div>
                     <h3>Cloud Database</h3>
                     <p>All data stored securely on Google Cloud Platform with real-time sync</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-sms"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-sms"></i></div>
                     <h3>SMS Alerts</h3>
                     <p>Instant Twilio SMS notifications when luggage enters restricted zones</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Mobile App Support</h3>
-                    <p>Monitor from anywhere using our responsive web app or mobile app</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <h3>Analytics Dashboard</h3>
-                    <p>Comprehensive reports and historical route analysis</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Security Encrypted</h3>
-                    <p>End-to-end encryption for all tracking data and communications</p>
                 </div>
             </div>
         </div>
@@ -144,27 +157,13 @@
                         <span>Shorley Smart <span class="highlight">AirTrack Pro</span></span>
                     </div>
                     <p>Advanced IoT luggage tracking solution for modern airports</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                        <a href="#"><i class="fab fa-github"></i></a>
-                    </div>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
                         <li><a href="index.html">Home</a></li>
-                        <li><a href="tracking.html">Live Tracking</a></li>
+                        <li><a href="#live-map">Live Map</a></li>
                         <li><a href="admin.html">Admin</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
@@ -174,6 +173,141 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // Your Firebase configuration (same as before)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDGa_gw80c9x0fhgjakh3Zom289dNP_qKI",
+            authDomain: "shorley-airtrack.firebaseapp.com",
+            databaseURL: "https://shorley-airtrack-default-rtdb.firebaseio.com",
+            projectId: "shorley-airtrack",
+            storageBucket: "shorley-airtrack.firebasestorage.app",
+            messagingSenderId: "310823970995",
+            appId: "1:310823970995:web:ce77612a425ef290ae28c6"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Initialize map (will center when first data arrives)
+        let map = L.map('map').setView([9.532, 6.449], 15);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+        }).addTo(map);
+
+        let marker = null;
+        let pathPoints = [];
+        let pathLayer = null;
+
+        // Listen for real-time GPS data
+        const gpsRef = database.ref('/gps');
+        gpsRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.latitude && data.longitude) {
+                const lat = data.latitude;
+                const lng = data.longitude;
+                const speed = data.speed || 0;
+                const lastUpdate = data.lastUpdate ? new Date(parseInt(data.lastUpdate)).toLocaleTimeString() : new Date().toLocaleTimeString();
+
+                // Update data panel
+                document.getElementById('lat').innerText = lat.toFixed(6);
+                document.getElementById('lng').innerText = lng.toFixed(6);
+                document.getElementById('speed').innerText = speed.toFixed(1);
+                document.getElementById('timestamp').innerText = lastUpdate;
+                document.getElementById('onlineStatus').className = 'status-badge online';
+
+                // Update marker
+                if (marker) {
+                    marker.setLatLng([lat, lng]);
+                } else {
+                    marker = L.marker([lat, lng]).addTo(map);
+                    marker.bindPopup('<b>Shorley AirTrack Pro</b><br>Live GPS Tracker');
+                }
+                marker.openPopup();
+
+                // Draw path
+                pathPoints.push([lat, lng]);
+                if (pathPoints.length > 100) pathPoints.shift(); // keep last 100 points
+                if (pathLayer) map.removeLayer(pathLayer);
+                pathLayer = L.polyline(pathPoints, { color: '#ec4899', weight: 3 }).addTo(map);
+
+                // Center map on device
+                map.setView([lat, lng], 15);
+            } else {
+                document.getElementById('onlineStatus').className = 'status-badge delayed';
+                document.getElementById('lat').innerText = '--';
+                document.getElementById('lng').innerText = '--';
+                document.getElementById('speed').innerText = '--';
+                document.getElementById('timestamp').innerText = 'Waiting for data...';
+            }
+        }, (error) => {
+            console.error("Firebase read error:", error);
+            document.getElementById('onlineStatus').className = 'status-badge delayed';
+            document.getElementById('timestamp').innerText = 'Connection error';
+        });
+    </script>
+
+    <style>
+        /* Additional styles for the live map section */
+        .live-map-section {
+            padding: 60px 0;
+            background: var(--light);
+        }
+        .map-container {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        #map {
+            height: 500px;
+            width: 100%;
+            z-index: 1;
+        }
+        .map-data-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            z-index: 1000;
+            font-family: monospace;
+            border-left: 4px solid #ec4899;
+        }
+        .map-data-panel .data-row {
+            margin: 5px 0;
+        }
+        .map-data-panel i {
+            width: 24px;
+            color: #ec4899;
+        }
+        .online {
+            display: inline-block;
+            margin-top: 5px;
+            background: #10b981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        .delayed {
+            background: #ef4444;
+        }
+        @media (max-width: 768px) {
+            .map-data-panel {
+                bottom: 10px;
+                left: 10px;
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            #map {
+                height: 400px;
+            }
+        }
+    </style>
 </body>
 </html>
