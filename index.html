@@ -14,7 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
-        /* Additional styles for map and history */
+        /* ===== MAP & HISTORY STYLES ===== */
         .map-history-section {
             padding: 60px 0;
             background: var(--light);
@@ -32,7 +32,7 @@
             z-index: 1;
         }
         .map-data-panel {
-            background: rgba(0,0,0,0.75);
+            background: rgba(0,0,0,0.8);
             color: white;
             padding: 12px 20px;
             border-radius: 12px;
@@ -40,10 +40,60 @@
             font-family: monospace;
             border-left: 4px solid #ec4899;
             margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+        }
+        .map-data-panel .dot-online {
+            color: #10b981;
+        }
+        .map-data-panel .dot-offline {
+            color: #ef4444;
         }
         .map-data-panel i {
-            width: 24px;
+            width: 20px;
             color: #ec4899;
+        }
+        .map-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .map-controls button {
+            padding: 8px 16px;
+            background: #ec4899;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .map-controls button:hover {
+            background: #db2777;
+        }
+        .map-controls button.secondary {
+            background: var(--gray);
+        }
+        .map-controls button.secondary:hover {
+            background: #4b5563;
+        }
+        .live-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         .history-table-container {
             margin-top: 20px;
@@ -52,6 +102,9 @@
         .history-table-container h3 {
             margin-bottom: 15px;
             color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .history-table-container table {
             width: 100%;
@@ -71,80 +124,35 @@
         .history-table-container tr:hover {
             background: #fce7f3;
         }
-        .status-online {
-            color: #10b981;
-            font-weight: bold;
-        }
-        .status-offline {
-            color: #ef4444;
-            font-weight: bold;
-        }
         .history-count {
             background: #ec4899;
             color: white;
             padding: 2px 10px;
             border-radius: 20px;
             font-size: 12px;
-            margin-left: 10px;
-        }
-        .map-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .map-controls button {
-            padding: 8px 16px;
-            background: #ec4899;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
-        }
-        .map-controls button:hover {
-            background: #db2777;
-        }
-        .live-badge {
-            display: inline-block;
-            background: #10b981;
-            color: white;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            margin-left: 10px;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
         }
         .loading-history {
             text-align: center;
             padding: 20px;
             color: var(--gray);
         }
+        .no-data {
+            color: var(--gray);
+            font-style: italic;
+        }
         @media (max-width: 768px) {
-            #map {
-                height: 300px;
-            }
-            .map-data-panel {
-                font-size: 12px;
-                padding: 8px 12px;
-            }
-            .history-table-container table {
-                font-size: 12px;
-            }
+            #map { height: 300px; }
+            .map-data-panel { font-size: 12px; padding: 8px 12px; }
+            .map-controls button { padding: 6px 12px; font-size: 12px; }
+            .history-table-container table { font-size: 12px; }
             .history-table-container th,
-            .history-table-container td {
-                padding: 6px 8px;
-            }
+            .history-table-container td { padding: 6px 8px; }
         }
     </style>
 </head>
 <body>
-    <!-- ========== NAVIGATION ========== -->
+
+    <!-- ===== NAVIGATION ===== -->
     <nav class="navbar">
         <div class="container">
             <div class="logo">
@@ -164,7 +172,7 @@
         </div>
     </nav>
 
-    <!-- ========== HERO SECTION ========== -->
+    <!-- ===== HERO SECTION ===== -->
     <section id="home" class="hero">
         <div class="container">
             <div class="hero-content">
@@ -177,7 +185,7 @@
                     <span class="gradient-text">AirTrack Pro</span>
                 </h1>
                 <p class="hero-description">
-                    Advanced IoT-powered luggage tracking system for airports. 
+                    Advanced IoT-powered luggage tracking system for airports.
                     Monitor your freight from check-in to arrival with GPS precision.
                 </p>
                 <div class="hero-buttons">
@@ -217,49 +225,47 @@
         </div>
     </section>
 
-    <!-- ========== LIVE MAP + HISTORY SECTION ========== -->
+    <!-- ===== LIVE MAP + HISTORY ===== -->
     <section id="tracking" class="map-history-section">
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">Live Tracking</span>
-                <h2 class="section-title">Real‑Time Location & History</h2>
+                <h2 class="section-title">Real‑Time Location &amp; History</h2>
                 <p class="section-description">
                     Live GPS location of your ESP32 device. Map updates automatically.
                 </p>
             </div>
 
             <div class="map-history-container">
-                <!-- Live Status Panel -->
+                <!-- Status Panel -->
                 <div class="map-data-panel" id="statusPanel">
-                    <div class="data-row">
-                        <i class="fas fa-circle" style="color: #10b981;"></i>
-                        <span id="statusText">🟢 LIVE</span>
-                        <span style="margin-left: 20px;">
-                            <i class="fas fa-map-marker-alt"></i>
-                            Lat: <strong id="statusLat">--</strong>
-                            Lng: <strong id="statusLng">--</strong>
-                        </span>
-                        <span style="margin-left: 20px;">
-                            <i class="fas fa-tachometer-alt"></i>
-                            Speed: <strong id="statusSpeed">--</strong> km/h
-                        </span>
-                        <span style="margin-left: 20px;">
-                            <i class="fas fa-clock"></i>
-                            Last update: <span id="statusTime">--</span>
-                        </span>
-                    </div>
+                    <span>
+                        <i class="fas fa-circle dot-online" id="statusDot"></i>
+                        <span id="statusText">LIVE</span>
+                    </span>
+                    <span>
+                        <i class="fas fa-map-marker-alt"></i>
+                        Lat: <strong id="statusLat">--</strong>
+                        Lng: <strong id="statusLng">--</strong>
+                    </span>
+                    <span>
+                        <i class="fas fa-tachometer-alt"></i>
+                        Speed: <strong id="statusSpeed">--</strong> km/h
+                    </span>
+                    <span>
+                        <i class="fas fa-clock"></i>
+                        Last update: <span id="statusTime">--</span>
+                    </span>
                 </div>
 
                 <!-- Map Controls -->
                 <div class="map-controls">
-                    <button onclick="centerMap()"><i class="fas fa-crosshairs"></i> Center Map</button>
-                    <button onclick="clearPath()"><i class="fas fa-eraser"></i> Clear Path</button>
-                    <button onclick="refreshHistory()"><i class="fas fa-sync"></i> Refresh</button>
-                    <span style="margin-left: auto; align-self: center;">
+                    <button onclick="centerMap()"><i class="fas fa-crosshairs"></i> Center</button>
+                    <button onclick="clearPath()" class="secondary"><i class="fas fa-eraser"></i> Clear Path</button>
+                    <button onclick="refreshHistory()" class="secondary"><i class="fas fa-sync"></i> Refresh</button>
+                    <span style="margin-left: auto; align-self: center; font-size: 13px; color: var(--gray);">
                         <span class="live-badge">● LIVE</span>
-                        <span style="font-size: 13px; color: var(--gray); margin-left: 10px;">
-                            <span id="pointCount">0</span> path points
-                        </span>
+                        <span id="pointCount">0</span> path points
                     </span>
                 </div>
 
@@ -291,7 +297,7 @@
         </div>
     </section>
 
-    <!-- ========== FEATURES SECTION ========== -->
+    <!-- ===== FEATURES ===== -->
     <section id="features" class="features">
         <div class="container">
             <div class="section-header">
@@ -303,44 +309,32 @@
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-satellite-dish"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-satellite-dish"></i></div>
                     <h3>GPS Real-Time Tracking</h3>
                     <p>NEO-6M GPS module provides accurate location updates every 5 seconds</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-cloud-upload-alt"></i></div>
                     <h3>Cloud Database</h3>
                     <p>All data stored securely on Google Cloud Platform with real-time sync</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-sms"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-sms"></i></div>
                     <h3>SMS Alerts</h3>
                     <p>Instant SMS notifications when your luggage moves to a new location</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
                     <h3>Mobile App Support</h3>
                     <p>Monitor from anywhere using our responsive web dashboard</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
                     <h3>Analytics Dashboard</h3>
                     <p>Comprehensive reports and historical route analysis</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
                     <h3>Security Encrypted</h3>
                     <p>End-to-end encryption for all tracking data and communications</p>
                 </div>
@@ -348,7 +342,7 @@
         </div>
     </section>
 
-    <!-- ========== FOOTER ========== -->
+    <!-- ===== FOOTER ===== -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -390,7 +384,9 @@
     </footer>
 
     <script>
-        // ========== FIREBASE CONFIGURATION ==========
+        // ========================================
+        // FIREBASE CONFIGURATION
+        // ========================================
         const firebaseConfig = {
             apiKey: "AIzaSyDGa_gw80c9x0fhgjakh3Zom289dNP_qKI",
             authDomain: "shorley-airtrack.firebaseapp.com",
@@ -404,8 +400,10 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // ========== MAP ==========
-        let map = L.map('map').setView([9.55, 6.47], 15);
+        // ========================================
+        // MAP SETUP
+        // ========================================
+        const map = L.map('map').setView([9.55, 6.47], 15);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
         }).addTo(map);
@@ -413,26 +411,45 @@
         let marker = null;
         let pathPoints = [];
         let pathLayer = null;
+        let hasLocationData = false;
 
-        // ========== UPDATE STATUS PANEL ==========
+        // ========================================
+        // UPDATE STATUS PANEL
+        // ========================================
         function updateStatusPanel(lat, lng, speed, time) {
             document.getElementById('statusLat').textContent = lat.toFixed(6);
             document.getElementById('statusLng').textContent = lng.toFixed(6);
             document.getElementById('statusSpeed').textContent = speed.toFixed(1);
-            document.getElementById('statusTime').textContent = time;
-            document.getElementById('statusText').innerHTML = '🟢 LIVE';
+            document.getElementById('statusTime').textContent = time || new Date().toLocaleTimeString();
+            document.getElementById('statusText').textContent = 'LIVE';
+            document.getElementById('statusDot').className = 'fas fa-circle dot-online';
             document.getElementById('pointCount').textContent = pathPoints.length;
         }
 
-        // ========== REAL-TIME CURRENT LOCATION ==========
+        function showOfflineStatus() {
+            document.getElementById('statusText').textContent = 'OFFLINE';
+            document.getElementById('statusDot').className = 'fas fa-circle dot-offline';
+            document.getElementById('statusLat').textContent = '--';
+            document.getElementById('statusLng').textContent = '--';
+            document.getElementById('statusSpeed').textContent = '--';
+            document.getElementById('statusTime').textContent = 'Waiting for data...';
+        }
+
+        // ========================================
+        // REAL-TIME CURRENT LOCATION
+        // ========================================
         const currentRef = database.ref('/gps');
+
         currentRef.on('value', (snapshot) => {
             const data = snapshot.val();
+
             if (data && data.latitude && data.longitude) {
                 const lat = data.latitude;
                 const lng = data.longitude;
                 const speed = data.speed || 0;
                 const time = new Date().toLocaleTimeString();
+
+                hasLocationData = true;
 
                 // Update marker
                 if (marker) {
@@ -446,6 +463,7 @@
                 // Update path
                 pathPoints.push([lat, lng]);
                 if (pathPoints.length > 100) pathPoints.shift();
+
                 if (pathLayer) map.removeLayer(pathLayer);
                 pathLayer = L.polyline(pathPoints, { color: '#ec4899', weight: 3 }).addTo(map);
 
@@ -453,10 +471,20 @@
 
                 // Update status panel
                 updateStatusPanel(lat, lng, speed, time);
+            } else {
+                // No location data yet
+                if (!hasLocationData) {
+                    showOfflineStatus();
+                }
             }
+        }, (error) => {
+            console.error('Firebase error:', error);
+            showOfflineStatus();
         });
 
-        // ========== LOAD HISTORY ==========
+        // ========================================
+        // LOAD LAST 10 HISTORY
+        // ========================================
         function loadHistory() {
             const historyRef = database.ref('/history');
             historyRef.orderByKey().limitToLast(10).once('value', (snapshot) => {
@@ -469,7 +497,7 @@
                     return;
                 }
 
-                let entries = [];
+                const entries = [];
                 snapshot.forEach((child) => {
                     entries.push({
                         key: child.key,
@@ -477,22 +505,29 @@
                     });
                 });
 
-                // Sort by timestamp (newest first)
+                // Sort newest first
                 entries.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
-                // Show last 10
                 const displayEntries = entries.slice(0, 10);
                 document.getElementById('historyCount').textContent = displayEntries.length;
+
+                if (displayEntries.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="loading-history">📭 No history data yet</td></tr>';
+                    return;
+                }
 
                 let html = '';
                 let counter = 1;
                 displayEntries.forEach((entry) => {
                     const time = entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : 'N/A';
+                    const lat = entry.latitude ? entry.latitude.toFixed(6) : '--';
+                    const lng = entry.longitude ? entry.longitude.toFixed(6) : '--';
+                    const speed = entry.speed ? entry.speed.toFixed(1) : '0.0';
                     html += `<tr>
                         <td>${counter}</td>
-                        <td>${entry.latitude ? entry.latitude.toFixed(6) : '--'}</td>
-                        <td>${entry.longitude ? entry.longitude.toFixed(6) : '--'}</td>
-                        <td>${entry.speed ? entry.speed.toFixed(1) : '0.0'}</td>
+                        <td>${lat}</td>
+                        <td>${lng}</td>
+                        <td>${speed}</td>
                         <td>${time}</td>
                     </tr>`;
                     counter++;
@@ -500,14 +535,18 @@
                 tbody.innerHTML = html;
             }).catch((error) => {
                 console.error('Error loading history:', error);
-                document.getElementById('historyBody').innerHTML = '<tr><td colspan="5">❌ Error loading history</td></tr>';
+                document.getElementById('historyBody').innerHTML = '<tr><td colspan="5" class="loading-history">❌ Error loading history</td></tr>';
             });
         }
 
-        // ========== MAP CONTROLS ==========
+        // ========================================
+        // MAP CONTROLS
+        // ========================================
         function centerMap() {
             if (marker) {
                 map.setView(marker.getLatLng(), 15);
+            } else {
+                map.setView([9.55, 6.47], 15);
             }
         }
 
@@ -519,15 +558,24 @@
 
         function refreshHistory() {
             loadHistory();
+            document.getElementById('historyBody').innerHTML = '<tr><td colspan="5" class="loading-history">⏳ Refreshing...</td></tr>';
+            setTimeout(loadHistory, 1000);
         }
 
-        // ========== INITIAL LOAD ==========
+        // ========================================
+        // INITIAL LOAD
+        // ========================================
         loadHistory();
-
-        // Refresh history every 30 seconds
         setInterval(loadHistory, 30000);
 
-        console.log('Shorley Smart AirTrack Pro - Website loaded!');
+        // Show offline initially if no data arrives within 5 seconds
+        setTimeout(() => {
+            if (!hasLocationData) {
+                showOfflineStatus();
+            }
+        }, 5000);
+
+        console.log('Shorley Smart AirTrack Pro - Website loaded successfully!');
     </script>
 </body>
 </html>
