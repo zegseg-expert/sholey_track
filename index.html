@@ -1,180 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <title>Shorley Smart AirTrack Pro - Live Map & History</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shorley Smart AirTrack Pro - Live GPS Tracker</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Leaflet for map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #ec4899;
+            text-align: center;
+        }
+        #map {
+            height: 400px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        .history-section {
+            margin-top: 20px;
+        }
+        .history-section h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th {
+            background: #ec4899;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        tr:hover {
+            background: #f9f9f9;
+        }
+        .status-online {
+            color: #10b981;
+            font-weight: bold;
+        }
+        .status-offline {
+            color: #ef4444;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-plane-departure"></i>
-                <span>Shorley Smart <span class="highlight">AirTrack Pro</span></span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="tracking.html">Live Tracking</a></li>
-                <li><a href="admin.html">Admin</a></li>
-            </ul>
-            <div class="nav-buttons">
-                <a href="#live-map" class="btn-primary">Live Map</a>
-                <a href="admin.html" class="btn-secondary">Admin Login</a>
-            </div>
-        </div>
-    </nav>
+    <div class="container">
+        <h1>📍 Shorley Smart AirTrack Pro</h1>
+        <div id="map"></div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <i class="fas fa-shield-alt"></i>
-                    Real-Time Tracking System
-                </div>
-                <h1 class="hero-title">
-                    Shorley Smart<br>
-                    <span class="gradient-text">AirTrack Pro</span>
-                </h1>
-                <p class="hero-description">
-                    Advanced IoT-powered luggage tracking system for airports. 
-                    Monitor your freight from check-in to arrival with GPS precision.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#live-map" class="btn-large btn-primary">
-                        <i class="fas fa-search"></i> View Live Map
-                    </a>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <span class="stat-number">99.9%</span>
-                        <span class="stat-label">Tracking Accuracy</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">10K+</span>
-                        <span class="stat-label">Luggage Tracked</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">24/7</span>
-                        <span class="stat-label">Live Monitoring</span>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-image">
-                <div class="floating-card card-1">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Live Location</span>
-                </div>
-                <div class="floating-card card-2">
-                    <i class="fas fa-bell"></i>
-                    <span>SMS Alerts</span>
-                </div>
-                <div class="floating-card card-3">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Analytics</span>
-                </div>
-            </div>
+        <div class="history-section">
+            <h2>Last 10 Locations</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Speed (km/h)</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody">
+                    <tr><td colspan="5">Loading history...</td></tr>
+                </tbody>
+            </table>
         </div>
-    </section>
-
-    <!-- LIVE MAP SECTION (New) -->
-    <section id="live-map" class="live-map-section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">Live Tracking</span>
-                <h2 class="section-title">Real‑Time GPS Location</h2>
-                <p class="section-description">
-                    Your ESP32 device location updates every 10 seconds. See it move on the map.
-                </p>
-            </div>
-            <div class="map-container">
-                <div id="map"></div>
-                <div class="map-data-panel">
-                    <div class="data-row">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Latitude: <strong id="lat">--</strong></span>
-                        <span>Longitude: <strong id="lng">--</strong></span>
-                    </div>
-                    <div class="data-row">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Speed: <strong id="speed">--</strong> km/h</span>
-                    </div>
-                    <div class="data-row">
-                        <i class="fas fa-clock"></i>
-                        <span>Last update: <span id="timestamp">--</span></span>
-                    </div>
-                    <div class="status-badge online" id="onlineStatus">● LIVE</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section (unchanged) -->
-    <section class="features">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">Features</span>
-                <h2 class="section-title">Why Choose Shorley Smart AirTrack Pro?</h2>
-                <p class="section-description">
-                    Cutting-edge technology for seamless luggage tracking experience
-                </p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-satellite-dish"></i></div>
-                    <h3>GPS Real-Time Tracking</h3>
-                    <p>NEO-6M GPS module provides accurate location updates every 5 seconds</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                    <h3>Cloud Database</h3>
-                    <p>All data stored securely on Google Cloud Platform with real-time sync</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-sms"></i></div>
-                    <h3>SMS Alerts</h3>
-                    <p>Instant Twilio SMS notifications when luggage enters restricted zones</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="logo">
-                        <i class="fas fa-plane-departure"></i>
-                        <span>Shorley Smart <span class="highlight">AirTrack Pro</span></span>
-                    </div>
-                    <p>Advanced IoT luggage tracking solution for modern airports</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="#live-map">Live Map</a></li>
-                        <li><a href="admin.html">Admin</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Shorley Smart AirTrack Pro. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // Your Firebase configuration (same as before)
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDGa_gw80c9x0fhgjakh3Zom289dNP_qKI",
             authDomain: "shorley-airtrack.firebaseapp.com",
@@ -185,12 +106,11 @@
             appId: "1:310823970995:web:ce77612a425ef290ae28c6"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Initialize map (will center when first data arrives)
-        let map = L.map('map').setView([9.532, 6.449], 15);
+        // --- Map ---
+        const map = L.map('map').setView([9.55, 6.47], 15);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
         }).addTo(map);
@@ -199,115 +119,80 @@
         let pathPoints = [];
         let pathLayer = null;
 
-        // Listen for real-time GPS data
-        const gpsRef = database.ref('/gps');
-        gpsRef.on('value', (snapshot) => {
+        // --- Real-time current location ---
+        const currentRef = database.ref('/gps');
+        currentRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data && data.latitude && data.longitude) {
                 const lat = data.latitude;
                 const lng = data.longitude;
                 const speed = data.speed || 0;
-                const lastUpdate = data.lastUpdate ? new Date(parseInt(data.lastUpdate)).toLocaleTimeString() : new Date().toLocaleTimeString();
-
-                // Update data panel
-                document.getElementById('lat').innerText = lat.toFixed(6);
-                document.getElementById('lng').innerText = lng.toFixed(6);
-                document.getElementById('speed').innerText = speed.toFixed(1);
-                document.getElementById('timestamp').innerText = lastUpdate;
-                document.getElementById('onlineStatus').className = 'status-badge online';
 
                 // Update marker
                 if (marker) {
                     marker.setLatLng([lat, lng]);
                 } else {
                     marker = L.marker([lat, lng]).addTo(map);
-                    marker.bindPopup('<b>Shorley AirTrack Pro</b><br>Live GPS Tracker');
+                    marker.bindPopup('<b>Shorley AirTrack Pro</b><br>Live Location');
                 }
-                marker.openPopup();
-
-                // Draw path
+                // Path (keep last 50 points)
                 pathPoints.push([lat, lng]);
-                if (pathPoints.length > 100) pathPoints.shift(); // keep last 100 points
+                if (pathPoints.length > 50) pathPoints.shift();
                 if (pathLayer) map.removeLayer(pathLayer);
                 pathLayer = L.polyline(pathPoints, { color: '#ec4899', weight: 3 }).addTo(map);
 
-                // Center map on device
                 map.setView([lat, lng], 15);
-            } else {
-                document.getElementById('onlineStatus').className = 'status-badge delayed';
-                document.getElementById('lat').innerText = '--';
-                document.getElementById('lng').innerText = '--';
-                document.getElementById('speed').innerText = '--';
-                document.getElementById('timestamp').innerText = 'Waiting for data...';
             }
-        }, (error) => {
-            console.error("Firebase read error:", error);
-            document.getElementById('onlineStatus').className = 'status-badge delayed';
-            document.getElementById('timestamp').innerText = 'Connection error';
         });
-    </script>
 
-    <style>
-        /* Additional styles for the live map section */
-        .live-map-section {
-            padding: 60px 0;
-            background: var(--light);
+        // --- Load last 10 history ---
+        function loadHistory() {
+            const historyRef = database.ref('/history');
+            historyRef.orderByKey().limitToLast(10).once('value', (snapshot) => {
+                const data = snapshot.val();
+                const tbody = document.getElementById('historyBody');
+                if (!data) {
+                    tbody.innerHTML = '<tr><td colspan="5">No history data</td></tr>';
+                    return;
+                }
+
+                let entries = [];
+                snapshot.forEach((child) => {
+                    entries.push({
+                        key: child.key,
+                        ...child.val()
+                    });
+                });
+
+                // Sort by timestamp (oldest first)
+                entries.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                // Show last 10 (already limited by limitToLast)
+                // But the order from Firebase is ascending by key, we want descending (newest first)
+                entries.reverse();
+
+                let html = '';
+                let counter = 1;
+                entries.forEach((entry) => {
+                    const time = entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : 'N/A';
+                    html += `<tr>
+                        <td>${counter}</td>
+                        <td>${entry.latitude.toFixed(6)}</td>
+                        <td>${entry.longitude.toFixed(6)}</td>
+                        <td>${entry.speed ? entry.speed.toFixed(1) : '0.0'}</td>
+                        <td>${time}</td>
+                    </tr>`;
+                    counter++;
+                });
+                tbody.innerHTML = html;
+            }).catch((error) => {
+                console.error('Error loading history:', error);
+                document.getElementById('historyBody').innerHTML = '<tr><td colspan="5">Error loading history</td></tr>';
+            });
         }
-        .map-container {
-            position: relative;
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
-        #map {
-            height: 500px;
-            width: 100%;
-            z-index: 1;
-        }
-        .map-data-panel {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(8px);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            z-index: 1000;
-            font-family: monospace;
-            border-left: 4px solid #ec4899;
-        }
-        .map-data-panel .data-row {
-            margin: 5px 0;
-        }
-        .map-data-panel i {
-            width: 24px;
-            color: #ec4899;
-        }
-        .online {
-            display: inline-block;
-            margin-top: 5px;
-            background: #10b981;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 11px;
-        }
-        .delayed {
-            background: #ef4444;
-        }
-        @media (max-width: 768px) {
-            .map-data-panel {
-                bottom: 10px;
-                left: 10px;
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-            #map {
-                height: 400px;
-            }
-        }
-    </style>
+
+        // Load history initially and every 10 seconds
+        loadHistory();
+        setInterval(loadHistory, 10000);
+    </script>
 </body>
 </html>
